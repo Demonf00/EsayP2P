@@ -1,5 +1,5 @@
 package com.esay.server;
 
-public class ServerTest {
+public class ServerTest implements IServerTest{
 
 }

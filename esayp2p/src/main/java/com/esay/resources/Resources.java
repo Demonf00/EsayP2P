@@ -1,5 +1,5 @@
 package com.esay.resources;
 
-public class Resources {
+public class Resources implements IResources{
 
 }

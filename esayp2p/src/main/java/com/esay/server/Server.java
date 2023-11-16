@@ -1,5 +1,5 @@
 package com.esay.server;
 
-public class Server {
+public class Server implements IServer{
 
 }
