@@ -1,0 +1,2 @@
+#!/bin/bash
+java -jar /mnt/c/users/86137/Desktop/EasyP2P/esayp2p/target/*.jar

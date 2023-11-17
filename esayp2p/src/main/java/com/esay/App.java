@@ -18,8 +18,10 @@ public final class App {
      */
     public static void main(String[] args) {
 
-        Client client;
-        Server server;
+        int PORT = 2266;
+
+        Client client = new Client();
+        Server server = new Server(2266);
         Scanner inputScanner = new Scanner(System.in);
         
         boolean loopFlag = true;
@@ -31,12 +33,12 @@ public final class App {
 
             if (option.equals("client")){
                 loopFlag = false;
-                
+                client.start();
             }
 
             else if (option.equals("server")){
                 loopFlag = false;
-                
+                server.startServer();
             }
         }
 
