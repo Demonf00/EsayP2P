@@ -36,7 +36,7 @@ public class Server extends Thread{
         try {
             serverSocket = new ServerSocket(port);
             this.running = true;
-            while (!this.running) {
+            while (this.running) {
                 System.out.println("Waiting for the client request");
                 Socket socket = serverSocket.accept();
                 ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
