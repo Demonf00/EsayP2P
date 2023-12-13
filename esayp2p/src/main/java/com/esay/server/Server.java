@@ -30,7 +30,7 @@ public class Server extends Thread{
             this.start();
         } catch (Exception e) {
             // TODO: handle exception
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 
@@ -51,23 +51,24 @@ public class Server extends Thread{
                 System.out.println("Waiting for the client request");
                 Socket socket = serverSocket.accept();
                 ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-                String message = (String) ois.readObject();
-                System.out.println("Message Received: " + message);
+                EsayFile file = (EsayFile) ois.readObject();
+                System.out.println("Message Received.");
                 ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-                EsayFile file = new EsayFile();
-                file.readFile("C:\\Users\\bruce\\Documents\\Projects\\EsayP2P\\anya.png");
+                // EsayFile file = new EsayFile();
+                // file.readFile("C:\\Users\\bruce\\Documents\\Projects\\EsayP2P\\anya.png");
+                file.writeFile("C:\\Users\\bruce\\Documents\\Projects\\EsayP2P\\receivedimg.jpg");
                 oos.writeObject(file);
                 ois.close();
                 oos.close();
                 socket.close();
-                if(message.equalsIgnoreCase("exit")) break;
+                // if(message.equalsIgnoreCase("exit")) break;
             }
             System.out.println("Shutting down Socket server!!");
             serverSocket.close();
         } catch (Exception e) {
             // TODO: handle exception
             System.out.println("Unable to open server.");
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 
