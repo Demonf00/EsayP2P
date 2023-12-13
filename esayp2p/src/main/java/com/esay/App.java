@@ -15,7 +15,16 @@ import javax.swing.JFrame;
  * Hello world!
  */
 public final class App {
+    private Client client;
+    private Server server;
+    public boolean loopFlag;
+    private EsayFrame gui;
+
     private App() {
+        this.GUIstart();
+        this.client = new Client(gui);
+        this.server = new Server(2266, gui);
+        loopFlag = true;
     }
 
     /**
@@ -25,36 +34,40 @@ public final class App {
     public static void main(String[] args) {
 
         int PORT = 2266;
+        App app = new App();
 
-        GUIstart();
+        // Scanner inputScanner = new Scanner(System.in);
 
-        Client client = new Client();
-        Server server = new Server(2266);
-        Scanner inputScanner = new Scanner(System.in);
-
-        boolean loopFlag = true;
         String option = null;
-        while (loopFlag){
-            System.out.println("Client or Server:");
-            option = inputScanner.nextLine();
+        System.out.println("Client or Server:");
+        while (app.loopFlag){
+            // option = inputScanner.nextLine();
 
 
-            if (option.equals("client")){
-                loopFlag = false;
-                client.start();
-            }
+            // if (option.equals("client")){
+            //     loopFlag = false;
+            //     app.client.start();
+            // }
 
-            else if (option.equals("server")){
-                loopFlag = false;
-                server.startServer();
-            }
+            // else if (option.equals("server")){
+            //     loopFlag = false;
+            //     app.server.startServer();
+            // }
         }
 
-        System.out.println(option);
+        // System.out.println(option);
 
     }
 
-    public static void GUIstart(){
-        EsayFrame frame = new EsayFrame();
+    public void GUIstart(){
+        this.gui = new EsayFrame(this);
+    }
+
+    public void startClient() {
+        client.start();
+    }
+
+    public void startServer() {
+        server.start();
     }
 }

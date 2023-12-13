@@ -1,5 +1,6 @@
 package com.esay.client;
 
+import com.esay.frame.EsayFrame;
 import com.esay.transfer.TextMessage;
 import com.esay.utility.EsayFile;
 
@@ -22,6 +23,11 @@ public class Client extends Thread{
  	private InputStream input;
     private static final int BUFFER_SIZE = 1024;
     private static final int DROP_SIZE = 1024 * BUFFER_SIZE;
+    private EsayFrame gui;
+
+    public Client(EsayFrame gui) {
+        this.gui = gui;
+    }
 
     public void run() {
         try {
@@ -30,7 +36,7 @@ public class Client extends Thread{
 
             while(!isRunning()){
                 System.out.println("Adress with port:");
-                addressWithPort = inputScanner.nextLine();
+                addressWithPort = gui.getInputText();
                 String[] tokens = addressWithPort.split(":");
                 if (tokens.length != 2) continue;
                 int port = Integer.parseInt(tokens[1]);
@@ -38,7 +44,9 @@ public class Client extends Thread{
                 Socket socket = null;
                 ObjectOutputStream oos = null;
                 ObjectInputStream ois = null;
-                for(int i=0; i<1;i++){
+
+                System.out.println("Connecting to server address " + tokens[0] + ", port# " + port);
+                for(int i=0; i<5;i++){
                     //establish socket connection to server
                     socket = new Socket(tokens[0], port);
                     //write to socket using ObjectOutputStream
@@ -92,6 +100,7 @@ public class Client extends Thread{
 
         } catch (Exception e) {
             System.out.println("Client running error");
+            e.printStackTrace();
         // } finally {
         //     if (inputScanner != null) {
         //         inputScanner.close();

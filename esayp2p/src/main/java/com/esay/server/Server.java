@@ -5,6 +5,7 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.util.Scanner;
 
+import com.esay.frame.EsayFrame;
 import com.esay.utility.EsayFile;
 import com.simtechdata.waifupnp.UPnP;
 
@@ -16,12 +17,15 @@ public class Server extends Thread{
     public int port;
     private boolean running;
     public ServerSocket serverSocket;
+    private EsayFrame gui;
 
-    public Server () {
+    public Server (EsayFrame gui) {
         this.port = 2266;
+        this.gui = gui;
     }
-    public Server (int port) {
+    public Server (int port, EsayFrame gui) {
         this.port = port;
+        this.gui = gui;
     }
 
     public void startServer() {

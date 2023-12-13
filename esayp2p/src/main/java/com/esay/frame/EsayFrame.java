@@ -10,6 +10,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 
 import javax.swing.BorderFactory;
@@ -20,12 +22,17 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.border.Border;
+
+import com.esay.App;
 
 public class EsayFrame extends JFrame {
     private JTextArea logTextArea;
+    private JTextField inputField;
+    private String inputText;
 
-    public EsayFrame () {
+    public EsayFrame (App app) {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("Dummy frame.");
         this.setSize(1000, 700);
@@ -49,7 +56,20 @@ public class EsayFrame extends JFrame {
         label1.setVerticalAlignment(JLabel.TOP);
         label1.setHorizontalAlignment(JLabel.LEFT);
         this.add(label1);
+        //// Client or server option label END
 
+        //// Input pane
+
+        // Create a JTextField for input
+        inputField = new JTextField();
+        GridBagConstraints inputConstraints = new GridBagConstraints();
+        inputConstraints.gridx = 0;
+        inputConstraints.gridy = 2;
+        inputConstraints.weighty = 1.0; // Allow the log pane to expand vertically
+        inputConstraints.fill = GridBagConstraints.BOTH;
+        inputConstraints.insets = new Insets(10, 10, 10, 10);
+        this.add(inputField, inputConstraints);
+        //// Input pane END
 
         //// Buttons
 
@@ -60,6 +80,8 @@ public class EsayFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
 
                 System.out.println("Server button Clicked!");
+                app.loopFlag = false;
+                app.startServer();
             }
         });
 
@@ -69,6 +91,20 @@ public class EsayFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
 
                 System.out.println("Client button Clicked!");
+                app.loopFlag = false;
+                app.startClient();
+            }
+        });
+
+        // Create a button to submit input
+        JButton submitButton = new JButton("Submit");
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // When the button is clicked, redirect the input
+                inputText = inputField.getText();
+                inputField.setText(null);
+                System.out.println("Submit button pressed!");
             }
         });
 
@@ -87,12 +123,19 @@ public class EsayFrame extends JFrame {
         button2Constraints.insets = new Insets(10, 5, 10, 0);
         buttonsPanel.add(clientButton, button2Constraints);
 
+        GridBagConstraints button3Constraints = new GridBagConstraints();
+        button3Constraints.gridx = 2;
+        button3Constraints.gridy = 0;
+        button3Constraints.insets = new Insets(10, 5, 10, 0);
+        buttonsPanel.add(submitButton, button3Constraints);
+
         // Add buttons panel to the frame
         GridBagConstraints buttonsPanelConstraints = new GridBagConstraints();
         buttonsPanelConstraints.gridx = 0;
-        buttonsPanelConstraints.gridy = 2;
+        buttonsPanelConstraints.gridy = 3;
         buttonsPanelConstraints.insets = new Insets(10, 10, 10, 10);
         this.add(buttonsPanel, buttonsPanelConstraints);
+        //// Buttons END
 
         //// Log pane
         logTextArea = new JTextArea();
@@ -107,6 +150,9 @@ public class EsayFrame extends JFrame {
         logConstraints.fill = GridBagConstraints.BOTH;
         logConstraints.insets = new Insets(10, 10, 10, 10);
         this.add(scrollPane, logConstraints);
+        //// Log pane END
+
+
 
         //// Render window
         this.setVisible(true);
@@ -134,6 +180,23 @@ public class EsayFrame extends JFrame {
             final String message = new String(buf, off, len);
             textArea.append(message);
             textArea.setCaretPosition(textArea.getDocument().getLength());
+        }
+    }
+
+    // Block until received input
+    public String getInputText() {
+        while(true) {
+            if (this.inputText != null) {
+                String ret = new String(this.inputText);
+                this.inputText = null;
+                return ret;
+            }
+            try {
+                Thread.sleep(3000);
+                System.out.println("Waiting for input.");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }
