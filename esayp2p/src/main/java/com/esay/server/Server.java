@@ -5,6 +5,7 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.util.Scanner;
 
+import com.esay.utility.EsayFile;
 import com.simtechdata.waifupnp.UPnP;
 
 import java.net.Socket;
@@ -53,7 +54,9 @@ public class Server extends Thread{
                 String message = (String) ois.readObject();
                 System.out.println("Message Received: " + message);
                 ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-                oos.writeObject("Hi Client "+message);
+                EsayFile file = new EsayFile();
+                file.readFile("C:\\Users\\bruce\\Documents\\Projects\\EsayP2P\\anya.png");
+                oos.writeObject(file);
                 ois.close();
                 oos.close();
                 socket.close();

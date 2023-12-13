@@ -6,10 +6,11 @@ import java.io.FileNotFoundException;  // Import this class to handle errors
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Scanner; // Import the Scanner class to read text files
 
-public class EsayFile {
+public class EsayFile implements Serializable {
 
     private ArrayList<Integer> data;
 
