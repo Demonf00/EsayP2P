@@ -3,7 +3,7 @@ import java.net.ServerSocket;
 import java.util.Scanner;
 import java.net.Socket;
 
-public class Server implements IServer{
+public class Server {
 
     Scanner inputScanner;
     public int port;
@@ -17,7 +17,9 @@ public class Server implements IServer{
     public void startServer() {
         try {
             serverSocket = new ServerSocket(port);
-            this.start();
+            // this.start();
+        } catch (Exception e) {
+            // TODO: handle exception
         }
     }
 
