@@ -1,8 +1,14 @@
 package com.esay;
 
 import com.esay.client.Client;
+import com.esay.frame.EsayFrame;
 import com.esay.server.Server;
+import com.esay.utility.EsayFile;
+
 import java.util.Scanner;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 
 
 /**
@@ -20,16 +26,18 @@ public final class App {
 
         int PORT = 2266;
 
+        GUIstart();
+
         Client client = new Client();
         Server server = new Server(2266);
         Scanner inputScanner = new Scanner(System.in);
-        
+
         boolean loopFlag = true;
         String option = null;
         while (loopFlag){
             System.out.println("Client or Server:");
             option = inputScanner.nextLine();
-            
+
 
             if (option.equals("client")){
                 loopFlag = false;
@@ -44,5 +52,9 @@ public final class App {
 
         System.out.println(option);
 
+    }
+
+    public static void GUIstart(){
+        EsayFrame frame = new EsayFrame();
     }
 }
