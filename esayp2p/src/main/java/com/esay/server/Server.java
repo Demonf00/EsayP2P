@@ -4,6 +4,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.util.Scanner;
+
+import com.simtechdata.waifupnp.UPnP;
+
 import java.net.Socket;
 
 public class Server extends Thread{
@@ -34,6 +37,7 @@ public class Server extends Thread{
 
     public void run () {
         try {
+            UPnP.openPortTCP(port);
             serverSocket = new ServerSocket(port);
             this.running = true;
             while (this.running) {
