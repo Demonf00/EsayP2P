@@ -37,7 +37,11 @@ public class Server extends Thread{
 
     public void run () {
         try {
-            UPnP.openPortTCP(port);
+            if(!UPnP.openPortTCP(port)){
+                System.out.println("Port forwarding failed.");
+            } else {
+                System.out.println("Port forwarding success.");
+            }
             serverSocket = new ServerSocket(port);
             this.running = true;
             while (this.running) {
