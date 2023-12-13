@@ -1,7 +1,9 @@
 package com.esay.utility;
 
 import java.io.File;  // Import the File class
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;  // Import this class to handle errors
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,42 +11,33 @@ import java.util.Scanner; // Import the Scanner class to read text files
 
 public class EsayFile {
 
-    private ArrayList<String> data;
+    private ArrayList<Integer> data;
 
     public EsayFile () {
-        data = new ArrayList<String>();
+        data = new ArrayList<Integer>();
     }
 
     public void readFile(String path){
-        try {
-            File myObj = new File(path);
-            Scanner myReader = new Scanner(myObj);
-            while (myReader.hasNextLine()) {
-                data.add(myReader.nextLine());
+        File file = new File(path);
+
+        try (FileInputStream fis = new FileInputStream(file)) {
+            int content;
+            while ((content = fis.read()) != -1) {
+                data.add(content);
             }
-            myReader.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void writeFile(String path){
-        try {
-            File myObj = new File(path);
-            if (myObj.createNewFile()) {
-                System.out.println("File created: " + myObj.getName());
-                FileWriter myWriter = new FileWriter(path);
-                for(String str : this.data){
-                    myWriter.write(str + "\n");
-                }
-                myWriter.close();
-                System.out.println("Successfully wrote to the file.");
-            } else {
-                System.out.println("File already exists.");
+        File file = new File(path);
+
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            for(Integer i : data){
+                fos.write((byte)i.intValue());
             }
         } catch (IOException e) {
-            System.out.println("An error occurred.");
             e.printStackTrace();
         }
     }
