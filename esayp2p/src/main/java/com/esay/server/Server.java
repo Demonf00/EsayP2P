@@ -17,7 +17,7 @@ public class Server extends Thread{
     public ServerSocket serverSocket;
 
     public Server () {
-        this.port = 5968;
+        this.port = 2266;
     }
     public Server (int port) {
         this.port = port;
