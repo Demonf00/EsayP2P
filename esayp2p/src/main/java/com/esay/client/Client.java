@@ -1,10 +1,14 @@
 package com.esay.client;
 
 import com.esay.transfer.TextMessage;
+
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Scanner;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
@@ -22,49 +26,77 @@ public class Client extends Thread{
         try {
             inputScanner = new Scanner(System.in);
             String addressWithPort;
-            
+
             while(!isRunning()){
-                System.out.println("Adress with port:");     
+                System.out.println("Adress with port:");
                 addressWithPort = inputScanner.nextLine();
                 String[] tokens = addressWithPort.split(":");
                 if (tokens.length != 2) continue;
                 int port = Integer.parseInt(tokens[1]);
-                try {
-                    System.out.println(tokens[0] + ":" + port);
-                    newConnection(tokens[0], port);         
-                } catch (Exception e) {
-                    ;
+                // InetAddress host = InetAddress.getLocalHost();
+                Socket socket = null;
+                ObjectOutputStream oos = null;
+                ObjectInputStream ois = null;
+                for(int i=0; i<5;i++){
+                    //establish socket connection to server
+                    socket = new Socket(tokens[0], port);
+                    //write to socket using ObjectOutputStream
+                    oos = new ObjectOutputStream(socket.getOutputStream());
+                    System.out.println("Sending request to Socket Server");
+                    if(i==4)oos.writeObject("exit");
+                    else oos.writeObject(""+i);
+                    //read the server response message
+                    ois = new ObjectInputStream(socket.getInputStream());
+                    String message = (String) ois.readObject();
+                    System.out.println("Message: " + message);
+                    //close resources
+                    ois.close();
+                    oos.close();
+                    Thread.sleep(100);
                 }
             }
-            output = clienSocket.getOutputStream();
-            input = clienSocket.getInputStream();
+        //         try {
+        //             System.out.println(tokens[0] + ":" + port);
+        //             System.out.println(tokens[0]);
+        //             System.out.println(port);
+        //             newConnection(tokens[0], port);
+        //             System.out.println("Connected.");
+        //         } catch (Exception e) {
+            //             ;
+            //         }
+        //     }
+        //     output = clienSocket.getOutputStream();
+        //     input = clienSocket.getInputStream();
 
-            while(isRunning()){
-                try {
-                    TextMessage latestMsg = receiveMessage();
-                    System.out.println(latestMsg.getMsg());
-                } catch (Exception e) {
-                    if (isRunning()) {
-                        System.out.println("Connection lost!!!");
-                        try {
-                            tearDownConnection();
-                        } catch (Exception f) {
-                            System.out.println("Unable to close the connection!!!");
-                        }
-                    }
-                }
-            }
+        //     while(isRunning()){
+        //         try {
+        //             TextMessage latestMsg = receiveMessage();
+        //             System.out.println(latestMsg.getMsg());
+        //         } catch (Exception e) {
+        //             if (isRunning()) {
+        //                 System.out.println("Connection lost!!!");
+        //                 try {
+        //                     tearDownConnection();
+        //                 } catch (Exception f) {
+        //                     System.out.println("Unable to close the connection!!!");
+        //                 }
+        //             }
+        //         }
+        //     }
 
         } catch (Exception e) {
             System.out.println("Client running error");
-        } finally {
-            if (inputScanner != null) {
-                inputScanner.close();
-            }
-            if (isRunning()) {
-                closeConnection();
-            }
+        // } finally {
+        //     if (inputScanner != null) {
+        //         inputScanner.close();
+        //     }
+        //     if (isRunning()) {
+        //         closeConnection();
+        //     }
+        // }
+
         }
+
     }
 
     public void newConnection(String hostname, int port) throws Exception{
@@ -103,7 +135,7 @@ public class Client extends Thread{
     	/**
 	 * Method sends a TextMessage using this socket.
 	 * @param msg the message that is to be sent.
-	 * @throws IOException some I/O error regarding the output stream 
+	 * @throws IOException some I/O error regarding the output stream
 	 */
 	public void sendMessage(TextMessage msg) throws IOException {
 		byte[] msgBytes = msg.getMsgBytes();
@@ -111,18 +143,18 @@ public class Client extends Thread{
 		output.flush();
 		System.out.println("Send message:\t '" + msg.getMsg() + "'");
     }
-	
-	
+
+
 	private TextMessage receiveMessage() throws IOException {
-		
+
 		int index = 0;
 		byte[] msgBytes = null, tmp = null;
 		byte[] bufferBytes = new byte[BUFFER_SIZE];
-		
+
 		/* read first char from stream */
-		byte read = (byte) input.read();	
+		byte read = (byte) input.read();
 		boolean reading = true;
-		
+
 		while(read != 13 && reading) {/* carriage return */
 			/* if buffer filled, copy to msg array */
 			if(index == BUFFER_SIZE) {
@@ -139,23 +171,23 @@ public class Client extends Thread{
 				msgBytes = tmp;
 				bufferBytes = new byte[BUFFER_SIZE];
 				index = 0;
-			} 
-			
+			}
+
 			/* only read valid characters, i.e. letters and numbers */
 			if((read > 31 && read < 127)) {
 				bufferBytes[index] = read;
 				index++;
 			}
-			
+
 			/* stop reading is DROP_SIZE is reached */
 			if(msgBytes != null && msgBytes.length + index >= DROP_SIZE) {
 				reading = false;
 			}
-			
+
 			/* read next char from stream */
 			read = (byte) input.read();
 		}
-		
+
 		if(msgBytes == null){
 			tmp = new byte[index];
 			System.arraycopy(bufferBytes, 0, tmp, 0, index);
@@ -164,9 +196,9 @@ public class Client extends Thread{
 			System.arraycopy(msgBytes, 0, tmp, 0, msgBytes.length);
 			System.arraycopy(bufferBytes, 0, tmp, msgBytes.length, index);
 		}
-		
+
 		msgBytes = tmp;
-		
+
 		/* build final String */
 		TextMessage msg = new TextMessage(msgBytes);
 		System.out.println("Receive message:\t '" + msg.getMsg() + "'");

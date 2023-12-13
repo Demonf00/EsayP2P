@@ -25,9 +25,11 @@ public class Server extends Thread{
 
     public void startServer() {
         try {
+            System.out.println("Server listening to port: " + port);
             this.start();
         } catch (Exception e) {
             // TODO: handle exception
+            System.out.println(e);
         }
     }
 
@@ -37,11 +39,11 @@ public class Server extends Thread{
 
     public void run () {
         try {
-            if(!UPnP.openPortTCP(port)){
-                System.out.println("Port forwarding failed.");
-            } else {
-                System.out.println("Port forwarding success.");
-            }
+            // if(!UPnP.openPortTCP(port)){
+            //     System.out.println("Port forwarding failed.");
+            // } else {
+            //     System.out.println("Port forwarding success.");
+            // }
             serverSocket = new ServerSocket(port);
             this.running = true;
             while (this.running) {
@@ -61,6 +63,8 @@ public class Server extends Thread{
             serverSocket.close();
         } catch (Exception e) {
             // TODO: handle exception
+            System.out.println("Unable to open server.");
+            System.out.println(e);
         }
     }
 }
