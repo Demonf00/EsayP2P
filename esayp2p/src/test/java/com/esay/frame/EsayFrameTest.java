@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 public class EsayFrameTest {
     @Test
     void testGUIshowup () {
-        EsayFrame frame = new EsayFrame(null);
+        new EsayFrame(null);
         while(true);
     }
-
 }
