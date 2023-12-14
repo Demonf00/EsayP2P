@@ -23,6 +23,7 @@ public final class App {
     private final int server_limit = 1;
     private int client_cnt;
     private int server_cnt;
+    private boolean scEnable;
 
     private App() {
         this.GUIstart();
@@ -31,6 +32,7 @@ public final class App {
         loopFlag = true;
         client_cnt = 0;
         server_cnt = 0;
+        scEnable = true;
     }
 
     /**
@@ -60,7 +62,7 @@ public final class App {
             //     app.server.startServer();
             // }
         }
-
+        app.scEnable = false;
         // System.out.println(option);
 
     }
@@ -70,13 +72,15 @@ public final class App {
     }
 
     public void startClient() {
-        if(client_cnt >= client_limit){return;}
+        if(!scEnable) return;
+        if(client_cnt >= client_limit) return;
         client.start();
         client_cnt++;
     }
 
     public void startServer() {
-        if(server_cnt >= server_limit){return;}
+        if(!scEnable) return;
+        if(server_cnt >= server_limit) return;
         server.start();
         server_cnt++;
     }

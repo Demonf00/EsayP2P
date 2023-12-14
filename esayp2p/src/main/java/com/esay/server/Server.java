@@ -49,28 +49,34 @@ public class Server extends Thread{
                 System.out.println("Port forwarding success.");
             }
             serverSocket = new ServerSocket(port);
-            this.running = true;
-            System.out.println("Waiting for the client request");
-            Socket socket = serverSocket.accept();
-            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-            System.out.println("Client connected: " + socket.getInetAddress());
-            while (this.running) {
-                System.out.println("Waiting for transmission.");
-                EsayFile file = (EsayFile) ois.readObject();
-                System.out.println("File Received.");
-                file.writeFile("C:\\Users\\bruce\\Documents\\Projects\\EsayP2P\\receivedimg.jpg");
-                oos.writeObject(file);
-            }
-            ois.close();
-            oos.close();
-            socket.close();
-            System.out.println("Shutting down Socket server!!");
-            serverSocket.close();
         } catch (Exception e) {
-            // TODO: handle exception
-            System.out.println("Unable to open server.");
+            System.out.println("Socket exception, see terminal for detail.");
             e.printStackTrace();
+        }
+
+        this.running = true;
+        while(this.running){
+            try {
+                System.out.println("Waiting for the client request");
+                Socket socket = serverSocket.accept();
+                ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+                ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+                System.out.println("Client connected: " + socket.getInetAddress());
+                while (this.running) {
+                    System.out.println("Waiting for transmission.");
+                    EsayFile file = (EsayFile) ois.readObject();
+                    System.out.println("File Received.");
+                    file.writeFile("C:\\Users\\bruce\\Documents\\Projects\\EsayP2P\\receivedimg.jpg");
+                    oos.writeObject(file);
+                }
+                ois.close();
+                oos.close();
+                socket.close();
+                System.out.println("Shutting down Socket server!!");
+                serverSocket.close();
+            } catch (Exception e) {
+                System.out.println("Client disconnected.");
+            }
         }
     }
 
