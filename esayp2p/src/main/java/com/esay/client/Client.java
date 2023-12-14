@@ -7,6 +7,9 @@ import com.esay.utility.EsayFile;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Scanner;
+
+import javax.swing.JFileChooser;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,7 +41,10 @@ public class Client extends Thread{
             while(!isRunning()){
                 System.out.println("Adress with port:");
                 addressWithPort = gui.getInputText();
-                String[] tokens = addressWithPort.split(":");
+                // String[] tokens = addressWithPort.split(":");
+                String[] tokens = new String[2];
+                tokens[0] = "173.33.71.22";
+                tokens[1] = "2266";
                 if (tokens.length != 2) continue;
                 int port = Integer.parseInt(tokens[1]);
                 Socket socket = null;
@@ -53,27 +59,57 @@ public class Client extends Thread{
                 while(continue_query){
                     String sendPath = null;
                     EsayFile file = new EsayFile();
+                    String fileName = null;
                     while(true){
-                        System.out.println("Input file path: ");
-                        sendPath = gui.getInputText();
-                        if(new File(sendPath).isFile()){break;}
-                        else{
-                            System.out.println("Invalid path.");
+                        // System.out.println("Input file path: ");
+                        File directory = new File("C:\\");
+                        JFileChooser chooser = new JFileChooser(directory);
+                        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                        int status = chooser.showOpenDialog(null);
+                        if (status == JFileChooser.APPROVE_OPTION) {
+                            File afile = chooser.getSelectedFile();
+                            if (afile == null) {
+                                continue;
+                            }
+
+                            fileName = chooser.getSelectedFile().getAbsolutePath();
+                            break;
                         }
+                        // sendPath = gui.getInputText();
+                        // if(new File(sendPath).isFile()){break;}
+                        // else{
+                        //     System.out.println("Invalid path.");
+                        // }
                     }
-                    file.readFile(sendPath);
+                    file.readFile(fileName);
                     oos.writeObject(file);
+                    System.out.println("SEND");
                     file = (EsayFile) ois.readObject();
+                    System.out.println("RECV");
                     String receivePath = null;
                     while(true){
-                        System.out.println("Input receive path: ");
-                        receivePath = gui.getInputText();
-                        if(new File(receivePath).isDirectory()){break;}
-                        else{
-                            System.out.println("Invalid path.");
+                        // System.out.println("Input receive path: ");
+                        File directory = new File("C:\\");
+                        JFileChooser chooser = new JFileChooser(directory);
+                        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                        int status = chooser.showOpenDialog(null);
+                        if (status == JFileChooser.APPROVE_OPTION) {
+                            File afile = chooser.getSelectedFile();
+                            if (afile == null) {
+                                continue;
+                            }
+
+                            fileName = chooser.getSelectedFile().getAbsolutePath();
+                            break;
                         }
+                        // receivePath = gui.getInputText();
+                        // if(new File(receivePath).isDirectory()){break;}
+                        // else{
+                        //     System.out.println("Invalid path.");
+                        // }
                     }
-                    file.writeFile(receivePath + "/received_file");
+                    System.out.println(fileName + "/received_file");
+                    file.writeFile(fileName + "/received_file");
                     Thread.sleep(100);
                     while(true){
                         System.out.println("Send file again? (y/n)");
