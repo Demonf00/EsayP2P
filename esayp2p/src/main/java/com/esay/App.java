@@ -19,12 +19,18 @@ public final class App {
     private Server server;
     public boolean loopFlag;
     private EsayFrame gui;
+    private final int client_limit = 1;
+    private final int server_limit = 1;
+    private int client_cnt;
+    private int server_cnt;
 
     private App() {
         this.GUIstart();
         this.client = new Client(gui);
         this.server = new Server(2266, gui);
         loopFlag = true;
+        client_cnt = 0;
+        server_cnt = 0;
     }
 
     /**
@@ -64,10 +70,14 @@ public final class App {
     }
 
     public void startClient() {
+        if(client_cnt >= client_limit){return;}
         client.start();
+        client_cnt++;
     }
 
     public void startServer() {
+        if(server_cnt >= server_limit){return;}
         server.start();
+        server_cnt++;
     }
 }
