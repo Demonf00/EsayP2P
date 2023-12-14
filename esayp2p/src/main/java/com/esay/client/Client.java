@@ -7,6 +7,7 @@ import com.esay.utility.EsayFile;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Scanner;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -40,78 +41,56 @@ public class Client extends Thread{
                 String[] tokens = addressWithPort.split(":");
                 if (tokens.length != 2) continue;
                 int port = Integer.parseInt(tokens[1]);
-                // InetAddress host = InetAddress.getLocalHost();
                 Socket socket = null;
                 ObjectOutputStream oos = null;
                 ObjectInputStream ois = null;
 
                 System.out.println("Connecting to server address " + tokens[0] + ", port# " + port);
-                for(int i=0; i<5;i++){
-                    //establish socket connection to server
-                    socket = new Socket(tokens[0], port);
-                    //write to socket using ObjectOutputStream
-                    oos = new ObjectOutputStream(socket.getOutputStream());
+                boolean continue_query = true;
+                socket = new Socket(tokens[0], port);
+                oos = new ObjectOutputStream(socket.getOutputStream());
+                ois = new ObjectInputStream(socket.getInputStream());
+                while(continue_query){
+                    String sendPath = null;
                     EsayFile file = new EsayFile();
-                    file.readFile("/mnt/c/Users/86137/Downloads/111.jpg");
+                    while(true){
+                        System.out.println("Input file path: ");
+                        sendPath = gui.getInputText();
+                        if(new File(sendPath).isFile()){break;}
+                        else{
+                            System.out.println("Invalid path.");
+                        }
+                    }
+                    file.readFile(sendPath);
                     oos.writeObject(file);
-                    // file.writeFile("C:\\Users\\bruce\\Documents\\Projects\\EsayP2P\\nb.jpg");
-                    System.out.println("Sending request to Socket Server");
-                    // if(i==4)oos.writeObject("exit");
-                    // else oos.writeObject(""+i);
-                    //read the server response message
-                    ois = new ObjectInputStream(socket.getInputStream());
                     file = (EsayFile) ois.readObject();
-                    file.writeFile("/mnt/c/Users/86137/Downloads/222.jpg");
-                    // System.out.println("Message: " + message);
-                    //close resources
-                    ois.close();
-                    oos.close();
+                    String receivePath = null;
+                    while(true){
+                        System.out.println("Input receive path: ");
+                        receivePath = gui.getInputText();
+                        if(new File(receivePath).isDirectory()){break;}
+                        else{
+                            System.out.println("Invalid path.");
+                        }
+                    }
+                    file.writeFile(receivePath + "/received_file");
                     Thread.sleep(100);
+                    while(true){
+                        System.out.println("Send file again? (y/n)");
+                        String response = gui.getInputText();
+                        if(response.equals("n")){continue_query = false; break;}
+                        else if(response.equals("y")){break;}
+                        else{System.out.println("Invalid response: " + response);}
+                    }
                 }
+                ois.close();
+                oos.close();
+                socket.close();
             }
-        //         try {
-        //             System.out.println(tokens[0] + ":" + port);
-        //             System.out.println(tokens[0]);
-        //             System.out.println(port);
-        //             newConnection(tokens[0], port);
-        //             System.out.println("Connected.");
-        //         } catch (Exception e) {
-            //             ;
-            //         }
-        //     }
-        //     output = clienSocket.getOutputStream();
-        //     input = clienSocket.getInputStream();
-
-        //     while(isRunning()){
-        //         try {
-        //             TextMessage latestMsg = receiveMessage();
-        //             System.out.println(latestMsg.getMsg());
-        //         } catch (Exception e) {
-        //             if (isRunning()) {
-        //                 System.out.println("Connection lost!!!");
-        //                 try {
-        //                     tearDownConnection();
-        //                 } catch (Exception f) {
-        //                     System.out.println("Unable to close the connection!!!");
-        //                 }
-        //             }
-        //         }
-        //     }
-
         } catch (Exception e) {
             System.out.println("Client running error");
             e.printStackTrace();
-        // } finally {
-        //     if (inputScanner != null) {
-        //         inputScanner.close();
-        //     }
-        //     if (isRunning()) {
-        //         closeConnection();
-        //     }
-        // }
-
         }
-
     }
 
     public void newConnection(String hostname, int port) throws Exception{

@@ -51,22 +51,21 @@ public class Server extends Thread{
             }
             serverSocket = new ServerSocket(port);
             this.running = true;
+            System.out.println("Waiting for the client request");
+            Socket socket = serverSocket.accept();
+            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            System.out.println("Client connected: " + socket.getInetAddress());
             while (this.running) {
-                System.out.println("Waiting for the client request");
-                Socket socket = serverSocket.accept();
-                ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+                System.out.println("Waiting for transmission.");
                 EsayFile file = (EsayFile) ois.readObject();
-                System.out.println("Message Received.");
-                ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-                // EsayFile file = new EsayFile();
-                // file.readFile("C:\\Users\\bruce\\Documents\\Projects\\EsayP2P\\anya.png");
+                System.out.println("File Received.");
                 file.writeFile("C:\\Users\\bruce\\Documents\\Projects\\EsayP2P\\receivedimg.jpg");
                 oos.writeObject(file);
-                ois.close();
-                oos.close();
-                socket.close();
-                // if(message.equalsIgnoreCase("exit")) break;
             }
+            ois.close();
+            oos.close();
+            socket.close();
             System.out.println("Shutting down Socket server!!");
             serverSocket.close();
         } catch (Exception e) {

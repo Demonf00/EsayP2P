@@ -193,7 +193,7 @@ public class EsayFrame extends JFrame {
             }
             try {
                 Thread.sleep(3000);
-                System.out.println("Waiting for input.");
+                // System.out.println("Waiting for input.");
             } catch (Exception e) {
                 e.printStackTrace();
             }
