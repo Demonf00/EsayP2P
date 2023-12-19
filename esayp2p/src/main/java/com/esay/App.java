@@ -1,6 +1,7 @@
 package com.esay;
 
 import com.esay.client.Client;
+import com.esay.esayurl.esayurl;
 import com.esay.frame.EsayFrame;
 import com.esay.server.Server;
 import com.esay.utility.EsayFile;
@@ -24,6 +25,7 @@ public final class App {
     private int client_cnt;
     private int server_cnt;
     private boolean scEnable;
+    private final int PORT = 2266;
 
     private App() {
         this.GUIstart();
@@ -41,30 +43,11 @@ public final class App {
      */
     public static void main(String[] args) {
 
-        int PORT = 2266;
         App app = new App();
 
-        // Scanner inputScanner = new Scanner(System.in);
-
-        String option = null;
         System.out.println("Client or Server:");
-        while (app.loopFlag){
-            // option = inputScanner.nextLine();
-
-
-            // if (option.equals("client")){
-            //     loopFlag = false;
-            //     app.client.start();
-            // }
-
-            // else if (option.equals("server")){
-            //     loopFlag = false;
-            //     app.server.startServer();
-            // }
-        }
+        while (app.loopFlag);
         app.scEnable = false;
-        // System.out.println(option);
-
     }
 
     public void GUIstart(){
@@ -81,7 +64,17 @@ public final class App {
     public void startServer() {
         if(!scEnable) return;
         if(server_cnt >= server_limit) return;
+        System.out.println(getIp() + ":" + PORT);
         server.start();
         server_cnt++;
+    }
+
+    public String getIp() {
+        try {
+            return esayurl.getIp();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
