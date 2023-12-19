@@ -4,6 +4,7 @@ import com.esay.client.Client;
 import com.esay.esayurl.esayurl;
 import com.esay.frame.EsayFrame;
 import com.esay.server.Server;
+import com.esay.utility.Cipher;
 import com.esay.utility.EsayFile;
 
 import java.util.Scanner;
@@ -64,7 +65,12 @@ public final class App {
     public void startServer() {
         if(!scEnable) return;
         if(server_cnt >= server_limit) return;
-        System.out.println(getIp() + ":" + PORT);
+        System.out.println("--------------------------------");
+        System.out.println(" Send following code to client.");
+        System.out.println("--------------------------------");
+        Cipher crypto = new Cipher(getIp() + ":" + PORT);
+        System.out.println(crypto.getCipheredText());
+        System.out.println("--------------------------------");
         server.start();
         server_cnt++;
     }
