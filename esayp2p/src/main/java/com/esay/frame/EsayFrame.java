@@ -7,11 +7,13 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.PrintStream;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -21,13 +23,19 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 
 import com.esay.App;
+import com.esay.utility.EsayFile;
 
 public class EsayFrame extends JFrame {
     private JTextArea logTextArea;
     private JTextField inputField;
     private String inputText;
+    private String fileToBeSended;
+    private String receiveDirectory;
 
     public EsayFrame (App app) {
+
+        this.fileToBeSended = null;
+        this.receiveDirectory = null;
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("Dummy frame.");
         this.setSize(1000, 700);
@@ -91,6 +99,48 @@ public class EsayFrame extends JFrame {
             }
         });
 
+        JButton addFileButton = new JButton("Add File");
+        addFileButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                System.out.println("Add file button Clicked!");
+                File directory = new File("C:\\");
+                JFileChooser chooser = new JFileChooser(directory);
+                chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                int status = chooser.showOpenDialog(null);
+                if (status == JFileChooser.APPROVE_OPTION) {
+                    File afile = chooser.getSelectedFile();
+                    if (afile != null) {
+                        fileToBeSended = chooser.getSelectedFile().getAbsolutePath();
+                        System.out.println("File Added: " + fileToBeSended);
+                    }
+                }
+            }
+        });
+
+
+        JButton saveDirectoryButton = new JButton("Where To Save");
+        saveDirectoryButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                System.out.println("Add file button Clicked!");
+                File directory = new File("C:\\");
+                JFileChooser chooser = new JFileChooser(directory);
+                chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                int status = chooser.showOpenDialog(null);
+                if (status == JFileChooser.APPROVE_OPTION) {
+                    File afile = chooser.getSelectedFile();
+                    if (afile != null) {
+                        receiveDirectory = chooser.getSelectedFile().getAbsolutePath();
+                        System.out.println("Saving Directory Added: " + receiveDirectory);
+                    }
+                }
+            }
+        });
+
+
         // Create a button to submit input
         JButton submitButton = new JButton("Submit");
         submitButton.addActionListener(new ActionListener() {
@@ -109,7 +159,7 @@ public class EsayFrame extends JFrame {
         GridBagConstraints button1Constraints = new GridBagConstraints();
         button1Constraints.gridx = 0;
         button1Constraints.gridy = 0;
-        button1Constraints.insets = new Insets(10, 5, 10, 5);
+        button1Constraints.insets = new Insets(10, 5, 10, 0);
         buttonsPanel.add(serverButton, button1Constraints);
 
         GridBagConstraints button2Constraints = new GridBagConstraints();
@@ -123,6 +173,18 @@ public class EsayFrame extends JFrame {
         button3Constraints.gridy = 0;
         button3Constraints.insets = new Insets(10, 5, 10, 0);
         buttonsPanel.add(submitButton, button3Constraints);
+
+        GridBagConstraints button4Constraints = new GridBagConstraints();
+        button4Constraints.gridx = 3;
+        button4Constraints.gridy = 0;
+        button4Constraints.insets = new Insets(10, 5, 10, 0);
+        buttonsPanel.add(addFileButton, button4Constraints);
+
+        GridBagConstraints button5Constraints = new GridBagConstraints();
+        button5Constraints.gridx = 4;
+        button5Constraints.gridy = 0;
+        button5Constraints.insets = new Insets(10, 5, 10, 0);
+        buttonsPanel.add(saveDirectoryButton, button5Constraints);
 
         // Add buttons panel to the frame
         GridBagConstraints buttonsPanelConstraints = new GridBagConstraints();
@@ -193,5 +255,13 @@ public class EsayFrame extends JFrame {
                 e.printStackTrace();
             }
         }
+    }
+
+    public String getAddingFile() {
+        return this.fileToBeSended;
+    }
+
+    public String getSavingDirectory() {
+        return this.receiveDirectory;
     }
 }

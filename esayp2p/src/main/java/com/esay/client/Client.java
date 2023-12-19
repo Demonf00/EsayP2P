@@ -2,6 +2,7 @@ package com.esay.client;
 
 import com.esay.frame.EsayFrame;
 import com.esay.transfer.TextMessage;
+import com.esay.utility.Cipher;
 import com.esay.utility.EsayFile;
 
 import java.net.InetAddress;
@@ -41,10 +42,11 @@ public class Client extends Thread{
             while(!isRunning()){
                 System.out.println("Adress with port:");
                 addressWithPort = gui.getInputText();
-                // String[] tokens = addressWithPort.split(":");
-                String[] tokens = new String[2];
-                tokens[0] = "173.33.71.22";
-                tokens[1] = "2266";
+                Cipher crypto = new Cipher(addressWithPort);
+                String[] tokens = crypto.getCipheredText().split(":");
+                // String[] tokens = new String[2];
+                // tokens[0] = "173.33.71.22";
+                // tokens[1] = "2266";
                 if (tokens.length != 2) continue;
                 int port = Integer.parseInt(tokens[1]);
                 Socket socket = null;
@@ -60,54 +62,51 @@ public class Client extends Thread{
                     String sendPath = null;
                     EsayFile file = new EsayFile();
                     String fileName = null;
-                    while(true){
+                    while(gui.getAddingFile() == null){
                         // System.out.println("Input file path: ");
-                        File directory = new File("C:\\");
-                        JFileChooser chooser = new JFileChooser(directory);
-                        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                        int status = chooser.showOpenDialog(null);
-                        if (status == JFileChooser.APPROVE_OPTION) {
-                            File afile = chooser.getSelectedFile();
-                            if (afile == null) {
-                                continue;
-                            }
+                        // File directory = new File("C:\\");
+                        // JFileChooser chooser = new JFileChooser(directory);
+                        // chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                        // int status = chooser.showOpenDialog(null);
+                        // if (status == JFileChooser.APPROVE_OPTION) {
+                        //     File afile = chooser.getSelectedFile();
+                        //     if (afile == null) {
+                        //         continue;
+                        //     }
 
-                            fileName = chooser.getSelectedFile().getAbsolutePath();
-                            break;
-                        }
-                        // sendPath = gui.getInputText();
-                        // if(new File(sendPath).isFile()){break;}
-                        // else{
-                        //     System.out.println("Invalid path.");
+                        //     fileName = chooser.getSelectedFile().getAbsolutePath();
+                        //     break;
                         // }
                     }
+                    fileName = gui.getAddingFile();
                     file.readFile(fileName);
                     oos.writeObject(file);
                     System.out.println("SEND");
                     file = (EsayFile) ois.readObject();
                     System.out.println("RECV");
                     String receivePath = null;
-                    while(true){
-                        // System.out.println("Input receive path: ");
-                        File directory = new File("C:\\");
-                        JFileChooser chooser = new JFileChooser(directory);
-                        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                        int status = chooser.showOpenDialog(null);
-                        if (status == JFileChooser.APPROVE_OPTION) {
-                            File afile = chooser.getSelectedFile();
-                            if (afile == null) {
-                                continue;
-                            }
+                    while(gui.getSavingDirectory() == null){
+                        // File directory = new File("C:\\");
+                        // JFileChooser chooser = new JFileChooser(directory);
+                        // chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                        // int status = chooser.showOpenDialog(null);
+                        // if (status == JFileChooser.APPROVE_OPTION) {
+                        //     File afile = chooser.getSelectedFile();
+                        //     if (afile == null) {
+                        //         continue;
+                        //     }
 
-                            fileName = chooser.getSelectedFile().getAbsolutePath();
-                            break;
-                        }
+                        //     fileName = chooser.getSelectedFile().getAbsolutePath();
+                        //     break;
+                        // }
+
                         // receivePath = gui.getInputText();
                         // if(new File(receivePath).isDirectory()){break;}
                         // else{
                         //     System.out.println("Invalid path.");
                         // }
                     }
+                    fileName = gui.getSavingDirectory();
                     System.out.println(fileName + "/received_file");
                     file.writeFile(fileName + "/received_file");
                     Thread.sleep(100);
