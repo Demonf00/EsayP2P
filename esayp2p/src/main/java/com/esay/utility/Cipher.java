@@ -1,7 +1,7 @@
 package com.esay.utility;
 
 public class Cipher {
-    private static final String SECRET_KEY = "fedcbaabcdeffed";
+    private static final String SECRET_KEY = "fedcbaabcdeffedcbaabcdeffedcba";
     private String plainText;
     private String cipheredText;
 
