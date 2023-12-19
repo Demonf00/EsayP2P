@@ -15,9 +15,9 @@ public class Cipher {
         char[] plainChar = plainText.toCharArray();
         char[] keyChar = SECRET_KEY.toCharArray();
         for (int i = 0; i < plainChar.length; ++i) {
-            keyChar[i] = (char) (plainChar[i] ^ keyChar[i]);
+            plainChar[i] = (char) (plainChar[i] ^ keyChar[i]);
         }
-        String text = new String(keyChar);
+        String text = new String(plainChar);
         return text;
     }
 
